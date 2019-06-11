@@ -1,0 +1,26 @@
+.container {
+  display: inline-block;
+  width: 220px;
+  height: auto;
+  margin: 10px;
+  padding: 5px;
+  text-align: center;
+  border: none;
+  background-color: burlywood;
+  border-radius: 10px;
+  box-shadow: 3px 3px 5px;
+  transition: transform .2s;
+}
+
+.container:hover {
+  transform: scale(1.03)
+}
+
+.container > img {
+  height: 200px;
+  width: 200px;
+}
+
+.container > h1 {
+  font-size: 20px;
+}
