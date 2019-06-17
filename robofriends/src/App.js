@@ -6,7 +6,6 @@ import Header from "./components/Header";
 import {setSearchField} from './actions';
 
 const mapStateToProps = state => {
-  console.log(state)
   return{
     searchField: state.searchField
   }
