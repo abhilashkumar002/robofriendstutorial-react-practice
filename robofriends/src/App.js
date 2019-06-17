@@ -3,17 +3,21 @@ import {connect} from 'react-redux';
 import Cards from "./components/Cards";
 import { Container } from "./components/CardStyle";
 import Header from "./components/Header";
-import {setSearchField} from './actions';
+import {setSearchField, requestRobots} from './actions';
 
 const mapStateToProps = state => {
   return{
-    searchField: state.searchField
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSearchChange: event => dispatch(setSearchField(event.target.value))
+    onSearchChange: event => dispatch(setSearchField(event.target.value)),
+    onRequestRobots: () => requestRobots(dispatch)
   }
 }
 
@@ -23,36 +27,31 @@ class App extends Component {
     this.setState({searchfield: event.target.value})
   }
 
-  constructor() {
-    super();
-    this.state = {
-      robots: []
-    };
-  }
-
   componentDidMount() {
-    fetch('http://jsonplaceholder.typicode.com/users')
-    .then(response => response.json())
-    .then(response => this.setState({robots: response}))
+    this.props.onRequestRobots();
   }
 
   render() {
-    const {robots} = this.state;
-    const {searchField, onSearchChange} = this.props; 
+    const {searchField, onSearchChange, robots, isPending, error } = this.props; 
     const filteredRobots = robots.filter(robot => {
       return robot.name
         .toLowerCase()
         .includes(searchField.toLowerCase());
     });
     return (
-      (!robots.length) ? 
+      isPending ? 
       <h1>Loading</h1> :
-      <div>
+      (
+        error ? 
+        <p>Error occured. Please check network connection.</p> :
+        <div>
         <Header searchChange={onSearchChange} />
         <Container>
           <Cards robots={filteredRobots} />
         </Container>
       </div>
+      )
+      
     );
   }
 }
