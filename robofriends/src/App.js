@@ -1,14 +1,33 @@
 import React, { Component } from "react";
+import {connect} from 'react-redux';
 import Cards from "./components/Cards";
 import { Container } from "./components/CardStyle";
 import Header from "./components/Header";
+import {setSearchField} from './actions';
+
+const mapStateToProps = state => {
+  console.log(state)
+  return{
+    searchField: state.searchField
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSearchChange: event => dispatch(setSearchField(event.target.value))
+  }
+}
 
 class App extends Component {
+
+  onSearchChange = (event) => {
+    this.setState({searchfield: event.target.value})
+  }
+
   constructor() {
     super();
     this.state = {
-      robots: [],
-      searchfield: ""
+      robots: []
     };
   }
 
@@ -18,22 +37,19 @@ class App extends Component {
     .then(response => this.setState({robots: response}))
   }
 
-  onSearchChange = event => {
-    this.setState({ searchfield: event.target.value });
-  };
-
   render() {
-    const {robots, searchfield} = this.state;
+    const {robots} = this.state;
+    const {searchField, onSearchChange} = this.props; 
     const filteredRobots = robots.filter(robot => {
       return robot.name
         .toLowerCase()
-        .includes(searchfield.toLowerCase());
+        .includes(searchField.toLowerCase());
     });
     return (
       (!robots.length) ? 
-      <h1>loading</h1> :
+      <h1>Loading</h1> :
       <div>
-        <Header searchChange={this.onSearchChange} />
+        <Header searchChange={onSearchChange} />
         <Container>
           <Cards robots={filteredRobots} />
         </Container>
@@ -42,4 +58,5 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+//export default App;
